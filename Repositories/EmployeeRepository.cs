@@ -65,7 +65,39 @@ namespace EmployeeManager.Azure.Repositories
 
         public Employee SelectByID(int id)
         {
-            throw new NotImplementedException();
+            using (SqlConnection cnn = new SqlConnection(connectionString))
+            {
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = cnn;
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "SELECT  EmployeeID, FirstName, LastName, Title, BirthDate, HireDate, Country, Notes " +
+                    "FROM Employees WHERE EmployeeID = @EmployeeID";
+                SqlParameter p = new SqlParameter("@EmployeeID", id);
+                cmd.Parameters.Add(p);
+
+                cnn.Open();
+                SqlDataReader reader = cmd.ExecuteReader();
+                List<Employee> employees = new List<Employee>();
+
+                while (reader.Read())
+                {
+                    Employee item = new Employee
+                    {
+                        EmployeeID = reader.GetInt32(0),
+                        FirstName = reader.GetString(1),
+                        LastName = reader.GetString(2),
+                        Title = reader.GetString(3),
+                        BirthDate = reader.GetDateTime(4),
+                        HireDate = reader.GetDateTime(5),
+                        Country = reader.GetString(6),
+                        Notes = reader.IsDBNull(7) ? "" : reader.GetString(7)
+                    };
+                    employees.Add(item);
+                }
+                reader.Close();
+                cnn.Close();
+                return employees.SingleOrDefault();
+            }
         }
 
         public List<string> SelectCountries()
