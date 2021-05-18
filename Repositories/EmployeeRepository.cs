@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -25,7 +26,28 @@ namespace EmployeeManager.Azure.Repositories
 
         public void Insert(Employee emp)
         {
-            throw new NotImplementedException();
+            using (SqlConnection cnn = new SqlConnection(connectionString))
+            {
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = cnn;
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "INSERT INTO Employees (FirstName, LastName, Title, BirthDate, HireDate, Country, Notes) " +
+                    "VALUES (@FirstName, @LastName, @Title, @BirthDate, @HireDate, @Country, @Notes)";
+
+                SqlParameter[] p = new SqlParameter[7];
+                p[0] = new SqlParameter("@FirstName", emp.FirstName);
+                p[1] = new SqlParameter("@LastName", emp.LastName);
+                p[2] = new SqlParameter("@Title", emp.Title);
+                p[3] = new SqlParameter("@BirthDate", emp.BirthDate);
+                p[4] = new SqlParameter("@HireDate", emp.HireDate);
+                p[5] = new SqlParameter("@Country", emp.Country);
+                p[6] = new SqlParameter("@Notes", emp.Notes ?? SqlString.Null);
+                cmd.Parameters.AddRange(p);
+
+                cnn.Open();
+                cmd.ExecuteNonQuery();
+                cnn.Close();
+            }
         }
 
         public List<Employee> SelectAll()
