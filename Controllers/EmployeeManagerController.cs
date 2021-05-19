@@ -37,5 +37,66 @@ namespace EmployeeManager.Azure.Controllers
 
             ViewBag.Countries = countries;
         }
+
+        [HttpGet]
+        public IActionResult Insert()
+        {
+            FillCountries();
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Insert(Employee model)
+        {
+            FillCountries();
+            if (ModelState.IsValid)
+            {
+                employeeRepository.Insert(model);
+                ViewBag.Message = "Employee Inserted Successfully";
+            }
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult Update(int id)
+        {
+            FillCountries();
+            Employee model = employeeRepository.SelectByID(id);
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Update(Employee model)
+        {
+            FillCountries();
+            if (ModelState.IsValid)
+            {
+                employeeRepository.Update(model);
+                ViewBag.Message = "Employee Updated Successfully";
+            }
+
+            return View(model);
+        }
+
+        [HttpGet]
+        [ActionName("Delete")]
+        public IActionResult ConfirmDelete(int id)
+        {
+            Employee model = employeeRepository.SelectByID(id);
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete(int id)
+        {
+            employeeRepository.Delete(id);
+            // Redirecting to new page, cannot use viewbag, use tempData
+            TempData["Message"] = "Employee Deleted Successfully";
+            return RedirectToAction("List");
+        }
     }    
 }
