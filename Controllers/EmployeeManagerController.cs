@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using EmployeeManager.Azure.Models;
 using EmployeeManager.Azure.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace EmployeeManager.Azure.Controllers
 {
@@ -21,5 +22,20 @@ namespace EmployeeManager.Azure.Controllers
             List<Employee> model = employeeRepository.SelectAll();
             return View(model);
         }
-    }
+
+        private void FillCountries()
+        {
+            List<string> countriesList = employeeRepository.SelectCountries();
+
+            List<SelectListItem> countries = (from c in countriesList
+                                              orderby c ascending
+                                              select new SelectListItem()
+                                              {
+                                                  Text = c,
+                                                  Value = c
+                                              }).ToList();
+
+            ViewBag.Countries = countries;
+        }
+    }    
 }
