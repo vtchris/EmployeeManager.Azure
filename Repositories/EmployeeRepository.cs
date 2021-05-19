@@ -129,7 +129,29 @@ namespace EmployeeManager.Azure.Repositories
 
         public void Update(Employee emp)
         {
-            throw new NotImplementedException();
+            using (SqlConnection cnn = new SqlConnection(connectionString))
+            {
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = cnn;
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "UPDATE Employees SET FirstName = @FirstName, LastName = @LastName, Title = @Title, BirthDate = @BirthDate " +
+                    "HireDate = @HireDate, Country = @Country, Notes = @Notes WHERE EmployeeID = @EmployeeID";
+
+                SqlParameter[] p = new SqlParameter[8];
+                p[0] = new SqlParameter("@FirstName", emp.FirstName);
+                p[1] = new SqlParameter("@LastName", emp.LastName);
+                p[2] = new SqlParameter("@Title", emp.Title);
+                p[3] = new SqlParameter("@BirthDate", emp.BirthDate);
+                p[4] = new SqlParameter("@HireDate", emp.HireDate);
+                p[5] = new SqlParameter("@Country", emp.Country);
+                p[6] = new SqlParameter("@Notes", emp.Notes ?? SqlString.Null);
+                p[7] = new SqlParameter("@EmployeeID", emp.EmployeeID);
+                cmd.Parameters.AddRange(p);
+
+                cnn.Open();
+                cmd.ExecuteNonQuery();
+                cnn.Close();
+            }
         }
     }
 }
