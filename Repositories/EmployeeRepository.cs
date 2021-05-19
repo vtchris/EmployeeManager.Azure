@@ -165,7 +165,7 @@ namespace EmployeeManager.Azure.Repositories
                 SqlCommand cmd = new SqlCommand();
                 cmd.Connection = cnn;
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "UPDATE Employees SET FirstName = @FirstName, LastName = @LastName, Title = @Title, BirthDate = @BirthDate " +
+                cmd.CommandText = "UPDATE Employees SET FirstName = @FirstName, LastName = @LastName, Title = @Title, BirthDate = @BirthDate, " +
                     "HireDate = @HireDate, Country = @Country, Notes = @Notes WHERE EmployeeID = @EmployeeID";
 
                 SqlParameter[] p = new SqlParameter[8];
