@@ -21,7 +21,19 @@ namespace EmployeeManager.Azure.Repositories
 
         public void Delete(int id)
         {
-            throw new NotImplementedException();
+            using (SqlConnection cnn = new SqlConnection(connectionString))
+            {
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = cnn;
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "DELETE FROM Employees WHERE EmployeeID = @EmployeeID";
+                SqlParameter p = new SqlParameter("@EmployeeID", id);
+                cmd.Parameters.Add(p);
+
+                cnn.Open();
+                int i = cmd.ExecuteNonQuery();
+                cnn.Close();
+            }
         }
 
         public void Insert(Employee emp)
