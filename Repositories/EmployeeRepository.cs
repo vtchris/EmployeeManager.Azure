@@ -136,7 +136,26 @@ namespace EmployeeManager.Azure.Repositories
 
         public List<string> SelectCountries()
         {
-            throw new NotImplementedException();
+            using (SqlConnection cnn = new SqlConnection(connectionString))
+            {
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = cnn;
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "SELECT DISTINCT Country FROM Employees ORDER BY Country ASC";
+
+                cnn.Open();
+                SqlDataReader reader = cmd.ExecuteReader();
+                List<string> countries = new List<string>();
+
+                while (reader.Read())
+                {
+                    string item = reader.GetString(0);
+                    countries.Add(item);
+                }
+                reader.Close();
+                cnn.Close();
+                return countries;
+            }
         }
 
         public void Update(Employee emp)
